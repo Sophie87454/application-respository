@@ -1,0 +1,1252 @@
+--create database
+USE master;
+GO
+CREATE DATABASE Young_Lives;
+
+--allow for snapshot isolation concurrency method
+ALTER DATABASE Young_Lives  SET ALLOW_SNAPSHOT_ISOLATION ON;
+ALTER DATABASE Young_Lives SET READ_COMMITTED_SNAPSHOT ON;
+
+--create poverty schema
+USE Young_Lives;
+GO
+CREATE SCHEMA poverty;
+
+
+--drop table if not empty and exists
+IF OBJECT_ID('Young_Lives.dbo.all_countries') IS NOT NULL DROP TABLE Young_Lives.dbo.all_countries;
+
+--append country tables to create a table contaning all country data
+BEGIN
+BEGIN TRY
+SELECT a.headage,a.childid,a.panel12345 as panel,a.yc, a.chsex, a.chlang, a.aniany, a.animilk, a.anidrau, a.anirumi, 
+a.birth, a.birth_age, a.chethnic, a.chldrel, a.round, a.inround, a.dint, a.agemon, a.deceased, a.chweight, a.chheight, a.bmi, 
+a.underweight, a.stunting, a.thinness, a.bwght, a.numante, a.delivery, a.tetanus, a.bcg, a.measles, a.dpt, a.polio, a.hib, a.chmightdie, 
+a.chillness, a.chinjury, a.chhprob, a.chdisability, a.chdisscale, a.chsmoke, a.chalcohol, a.chhrel, a.chhealth, a.marrcohab, a.marrcohab_age,
+a.chrephealth1, a.chrephealth2, a.chrephealth3, a.chrephealth4, a.cladder, a.hsleep, a.hcare, a.hchore, a.htask, a.hwork, a.hschool, a.hstudy, a.hplay,
+a.commwork, a.commsch, a.preprim, a.agegr1, a.enrol, a.engrade, a.entype, a.timesch, a.levlread, a.levlwrit, a.literate, a.careid,
+a.caredu, a.carehead, a.careage, a.caresex, a.carerel, a.carecantread, a.careladder, a.careldr4yrs, a.dadid, a.dadedu, a.dadlive, a.dadage, 
+a.dadcantread, a.dadyrdied, a.momid, a.momedu, a.momlive, a.momage, a.momcantread, a.momyrdied, a.headid, a.headedu, a.headsex, a.headrel, 
+a.clustid, a.commid, a.typesite, a.region, a.childloc, a.hhsize, a.male05,a.male612,a.male1317,a.male1860, a.male61, a.female05,
+a.female612,a.female1317,a.female1860, a.female61, a.wi_new, a.hq_new, a.sv_new, a.cd_new, a.drwaterq_new, a.toiletq_new, a.elecq_new,
+a.cookingq_new, a.ownhouse, a.ownlandhse
+INTO Young_Lives.dbo.all_countries
+FROM Young_Lives.dbo.Vietnam a
+UNION ALL
+SELECT b.headage,b.childid,b.panel12345 as panel,b.yc, b.chsex, b.chlang, b.aniany, b.animilk, b.anidrau, b.anirumi, 
+b.birth, b.birth_age, b.chethnic, b.chldrel, b.round, b.inround, b.dint, b.agemon, b.deceased, b.chweight, b.chheight, b.bmi, 
+b.underweight, b.stunting, b.thinness, b.bwght, b.numante, b.delivery, b.tetanus, b.bcg, b.measles, b.dpt, b.polio, b.hib, b.chmightdie, 
+b.chillness, b.chinjury, b.chhprob, b.chdisability, b.chdisscale, b.chsmoke, b.chalcohol, b.chhrel, b.chhealth, b.marrcohab, b.marrcohab_age,
+b.chrephealth1, b.chrephealth2, b.chrephealth3, b.chrephealth4, b.cladder, b.hsleep, b.hcare, b.hchore, b.htask, b.hwork, b.hschool, b.hstudy, b.hplay,
+b.commwork, b.commsch, b.preprim, b.agegr1, b.enrol, b.engrade, b.entype, b.timesch, b.levlread, b.levlwrit, b.literate, b.careid,
+b.caredu, b.carehead, b.careage, b.caresex, b.carerel, b.carecantread, b.careladder, b.careldr4yrs, b.dadid, b.dadedu, b.dadlive, b.dadage, 
+b.dadcantread, b.dadyrdied, b.momid, b.momedu, b.momlive, b.momage, b.momcantread, b.momyrdied, b.headid, b.headedu, b.headsex, b.headrel, 
+b.clustid, b.commid, b.typesite, b.region, b.childloc, b.hhsize, b.male05,b.male612,b.male1317,b.male1860, b.male61, b.female05,
+b.female612,b.female1317,b.female1860, b.female61, b.wi as wi_new, b.hq as hq_new, b.sv as sv_new, b.cd as cd_new, b.drwaterq as drwaterq_new, 
+b.toiletq as toiletq_new, b.elecq as elecq_new, b.cookingq as cookingq_new, b.ownhouse, b.ownlandhse FROM Young_Lives.dbo.India b
+UNION ALL
+SELECT c.headage,c.childid,c.panel ,c.yc, c.chsex, c.chlang, c.aniany, c.animilk, c.anidrau, c.anirumi,
+c.birth, c.birth_age, c.chethnic, c.chldrel, c.round, c.inround, c.dint, c.agemon, c.deceased, c.chweight, c.chheight, c.bmi, 
+c.underweight, c.stunting, c.thinness, c.bwght, c.numante, c.delivery, c.tetanus, c.bcg, c.measles, c.dpt, c.polio, c.hib, c.chmightdie, 
+c.chillness, c.chinjury, c.chhprob, c.chdisability, c.chdisscale, c.chsmoke, c.chalcohol, c.chhrel, c.chhealth, c.marrcohab, c.marrcohab_age,
+c.chrephealth1, c.chrephealth2, c.chrephealth3, c.chrephealth4, c.cladder, c.hsleep, c.hcare, c.hchore, c.htask, c.hwork, c.hschool, c.hstudy, c.hplay,
+c.commwork, c.commsch, c.preprim, c.agegr1, c.enrol, c.engrade, c.entype, c.timesch, c.levlread, c.levlwrit, c.literate, c.careid,
+c.caredu, c.carehead, c.careage, c.caresex, c.carerel, c.carecantread, c.careladder, c.careldr4yrs, c.dadid, c.dadedu, c.dadlive, c.dadage, 
+c.dadcantread, c.dadyrdied, c.momid, c.momedu, c.momlive, c.momage, c.momcantread, c.momyrdied, c.headid, c.headedu, c.headsex, c.headrel, 
+c.clustid, c.commid, c.typesite, c.region, c.childloc, c.hhsize, c.male05,c.male612,c.male1317,c.male1860, c.male61, c.female05,
+c.female612,c.female1317,c.female1860, c.female61, c.wi_new, c.hq_new, c.sv_new, c.cd_new, c.drwaterq_new, c.toiletq_new, c.elecq_new,
+c.cookingq_new, c.ownhouse, c.ownlandhse FROM Young_Lives.dbo.Ethiopia c
+UNION ALL
+SELECT d.headage,d.childid,d.panel12345 as panel, d.yc, d.chsex, d.chlang, d.aniany, d.animilk, d.anidrau, d.anirumi,
+d.birth, d.birth_age, d.chethnic, d.chldrel, d.round, d.inround, d.dint, d.agemon, d.deceased, d.chweight, d.chheight, d.bmi, 
+d.underweight, d.stunting, d.thinness, d.bwght, d.numante, d.delivery, d.tetanus, d.bcg, d.measles, d.dpt, d.polio, d.hib, d.chmightdie, 
+d.chillness, d.chinjury, d.chhprob, d.chdisability, d.chdisscale, d.chsmoke, d.chalcohol, d.chhrel, d.chhealth, d.marrcohab, d.marrcohab_age,
+d.chrephealth1, d.chrephealth2, d.chrephealth3, d.chrephealth4, d.cladder, d.hsleep, d.hcare, d.hchore, d.htask, d.hwork, d.hschool, d.hstudy, d.hplay,
+d.commwork, d.commsch, d.preprim, d.agegr1, d.enrol, d.engrade, d.entype, d.timesch, d.levlread, d.levlwrit, d.literate, d.careid,
+d.caredu, d.carehead, d.careage, d.caresex, d.carerel, d.carecantread, d.careladder, d.careldr4yrs, d.dadid, d.dadedu, d.dadlive, d.dadage, 
+d.dadcantread, d.dadyrdied, d.momid, d.momedu, d.momlive, d.momage, d.momcantread, d.momyrdied, d.headid, d.headedudu as headedu, d.headsex, d.headrel, 
+d.clustid, d.placeid as commid, d.typesite, d.region, d.childloc, d.hhsize, d.male05,d.male612,d.male1317,d.male1860, d.male61, d.female05,
+d.female612,d.female1317,d.female1860, d.female61, d.wi as wi_new, d.hq as hq_new, d.sv as sv_new, d.cd as cd_new, d.drwaterq as drwaterq_new, 
+d.toiletq as toiletq_new, d.elecq as elecq_new, d.cookingq as cookingq_new, d.ownhouse, d.ownlandhse FROM Young_Lives.dbo.Peru d
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+--remove included header rows
+BEGIN
+BEGIN TRY
+DELETE FROM Young_Lives.dbo.all_countries WHERE childid='childid'
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+--- make empty cells NULL
+--remove temporary table if exists and not empty
+IF OBJECT_ID('Young_Lives.dbo.make_null') IS NOT NULL DROP TABLE Young_Lives.dbo.make_null;
+--create table which contains SQL commands that make column values null
+USE Young_Lives;
+GO
+BEGIN
+BEGIN TRY
+select 'UPDATE ' + object_name(id) + ' SET ' + name + ' = NULL WHERE ' + name + ' = '' ''' ASSQLStatement
+INTO Young_Lives.dbo.make_null
+from syscolumns where type_name(xtype) in('varchar','char','nvarchar','nchar')
+and object_name(id) not like 'sys%' AND object_name(id) like 'all_countries';
+
+--loop through commands and execute
+ALTER TABLE Young_Lives.dbo.make_null
+ADD ID INT IDENTITY;
+
+DECLARE @LoopCounter INT = 1, @MaxRow INT, 
+        @Query NVARCHAR(100)
+SET @MaxRow = (SELECT MAX(ID) FROM Young_Lives.dbo.make_null)
+WHILE(@LoopCounter <= @MaxRow)
+BEGIN
+   SELECT @Query = (SELECT ASSQLStatement
+   FROM Young_Lives.dbo.make_null WHERE ID = @LoopCounter)
+ 
+   EXECUTE sp_executesql @Query 
+   SET @LoopCounter  = @LoopCounter  + 1        
+END
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+--remove tables if exist and not empty
+IF OBJECT_ID('Young_Lives.poverty.household_info') IS NOT NULL DROP TABLE Young_Lives.poverty.household_info;
+IF OBJECT_ID('Young_Lives.poverty.daily_activity') IS NOT NULL DROP TABLE Young_Lives.poverty.daily_activity;
+IF OBJECT_ID('Young_Lives.poverty.child_sex_education') IS NOT NULL DROP TABLE Young_Lives.poverty.child_sex_education;
+IF OBJECT_ID('Young_Lives.poverty.child_health') IS NOT NULL DROP TABLE Young_Lives.poverty.child_health;
+IF OBJECT_ID('Young_Lives.poverty.child_education') IS NOT NULL DROP TABLE Young_Lives.poverty.child_education;
+IF OBJECT_ID('Young_Lives.poverty.family_details') IS NOT NULL DROP TABLE Young_Lives.poverty.family_details;
+IF OBJECT_ID('Young_Lives.poverty.child_general_info') IS NOT NULL DROP TABLE Young_Lives.poverty.child_general_info;
+
+
+--create tables and transform data into meaningful values
+---create table containing general info about child
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+CASE
+	WHEN panel=1 THEN REPLACE(panel,1,'Yes')
+	WHEN panel=0 THEN REPLACE(panel,0, 'No')
+	ELSE NULL
+	END AS 'child_in_all_rounds',
+CASE
+	WHEN yc=1 THEN REPLACE(yc,1,'Younger')
+	WHEN yc=2 THEN REPLACE(yc,0, 'Older')
+	ELSE NULL
+	END AS 'cohort',
+CASE 
+	WHEN chsex=1 THEN REPLACE(chsex,1,'Male')
+	WHEN chsex=2 THEN REPLACE(chsex,2,'Female')
+	ELSE NULL
+	END AS 'gender',
+CASE
+	WHEN chlang=10 AND childid LIKE 'ET%' THEN REPLACE(chlang,10,'kembategna')
+	WHEN chlang=1 THEN REPLACE(chlang,1,'afarigna')
+	WHEN chlang=2 THEN REPLACE(chlang,2,'amarigna')
+	WHEN chlang=3 THEN REPLACE(chlang,3,'agewigna')
+	WHEN chlang=4 THEN REPLACE(chlang,4,'dawerogna')
+	WHEN chlang=5 THEN REPLACE(chlang,5,'gedeogna')
+	WHEN chlang=6 THEN REPLACE(chlang,6,'guraghigna')
+	WHEN chlang=7 THEN REPLACE(chlang,7,'hadiyigna')
+	WHEN chlang=8 THEN REPLACE(chlang,8,'harari')
+	WHEN chlang=9 THEN REPLACE(chlang,9,'kefigna')
+	WHEN chlang=11 THEN REPLACE(chlang,11,'oromifa')
+	WHEN chlang=12 THEN REPLACE(chlang,12,'sidamigna')
+	WHEN chlang=13 THEN REPLACE(chlang,13,'siltigna')
+	WHEN chlang=14 THEN REPLACE(chlang,14,'somaligna')
+	WHEN chlang=15 THEN REPLACE(chlang,15,'tigrigna')
+	WHEN chlang=16 THEN REPLACE(chlang,16,'welayitegna')
+	WHEN chlang=17 THEN REPLACE(chlang,17,'zayigna')
+	WHEN chlang=20 THEN REPLACE(chlang,20,'other')
+	WHEN chlang=79 THEN REPLACE(chlang,79,'refused to answer')
+	WHEN chlang=24 THEN REPLACE(chlang,24,'oria')
+	WHEN chlang=21 THEN REPLACE(chlang,21,'telugu')
+	WHEN chlang=22 THEN REPLACE(chlang,22,'hindi')
+	WHEN chlang=23 THEN REPLACE(chlang,23,'urdu')
+	WHEN chlang=25 THEN REPLACE(chlang,25,'kannada')
+	WHEN chlang=26 THEN REPLACE(chlang,26,'marati')
+	WHEN chlang=27 THEN REPLACE(chlang,27,'tamil')
+	WHEN chlang=28 THEN REPLACE(chlang,28,'local dialect')
+	WHEN chlang=32 THEN REPLACE(chlang,32,'quechua')
+	WHEN chlang=33 THEN REPLACE(chlang,33,'aymara')
+	WHEN chlang=34 THEN REPLACE(chlang,34,'native from jungle')
+	WHEN chlang=35 THEN REPLACE(chlang,35,'spanish & quechua')
+	WHEN chlang=36 THEN REPLACE(chlang,36,'spanish & aymara')
+	WHEN chlang=37 THEN REPLACE(chlang,37,'nomatsiguenga (native language in jungle)')
+	WHEN chlang=50 THEN REPLACE(chlang,50,'mute/difficulty speaking')
+	WHEN chlang=31 THEN REPLACE(chlang,31,'spanish')
+	WHEN chlang=10 AND childid NOT LIKE 'ET%'THEN REPLACE(chlang,10,'other')
+	WHEN chlang=41 THEN REPLACE(chlang,41,'vietnamese')
+	WHEN chlang=43 THEN REPLACE(chlang,43,'tay')
+	WHEN chlang=44 THEN REPLACE(chlang,44,'hmong')
+	WHEN chlang=45 THEN REPLACE(chlang,45,'nung')
+	WHEN chlang=46 THEN REPLACE(chlang,46,'ede')
+	WHEN chlang=47 THEN REPLACE(chlang,47,'thai')
+	WHEN chlang=48 THEN REPLACE(chlang,48,'dao')
+	WHEN chlang=49 THEN REPLACE(chlang,49,'giay')
+	WHEN chlang=42 THEN REPLACE(chlang,42,'chinese')
+	ELSE NULL
+	END AS 'first_language',
+CASE
+	WHEN chethnic=10 THEN REPLACE(chethnic,10,'Other')
+	WHEN chethnic=11 THEN REPLACE(chethnic,11,'Agew')
+	WHEN chethnic=12 THEN REPLACE(chethnic,12,'Amhara')
+	WHEN chethnic=13 THEN REPLACE(chethnic,13,'Gurage')
+	WHEN chethnic=14 THEN REPLACE(chethnic,14,'Hadiva')
+	WHEN chethnic=15 THEN REPLACE(chethnic,15,'Kambata')
+	WHEN chethnic=16 THEN REPLACE(chethnic,16,'Oromo')
+	WHEN chethnic=17 THEN REPLACE(chethnic,17,'Sidama')
+	WHEN chethnic=18 THEN REPLACE(chethnic,18,'Tigrian')
+	WHEN chethnic=19 THEN REPLACE(chethnic,19,'Wolavta')
+	WHEN chethnic=100 THEN REPLACE(chethnic,100,'Other, Hindu')
+	WHEN chethnic=101 THEN REPLACE(chethnic,101,'Other, Muslim')
+	WHEN chethnic=102 THEN REPLACE(chethnic,102,'Other, Buddhist')
+	WHEN chethnic=104 THEN REPLACE(chethnic,104,'Other, Christian')
+	WHEN chethnic=21 THEN REPLACE(chethnic,21,'SC')
+	WHEN chethnic=22 THEN REPLACE(chethnic,22,'ST')
+	WHEN chethnic=23 THEN REPLACE(chethnic,23,'BC')
+	WHEN chethnic=24 THEN REPLACE(chethnic,24,'Other')
+	WHEN chethnic=32 THEN REPLACE(chethnic,32,'Mestizo')
+	WHEN chethnic=33 THEN REPLACE(chethnic,33,'Native of the Amazon')
+	WHEN chethnic=34 THEN REPLACE(chethnic,34,'Negro')
+	WHEN chethnic=35 THEN REPLACE(chethnic,35,'Asiatic')
+	WHEN chethnic=31 THEN REPLACE(chethnic,31,'White')
+	WHEN chethnic=41 THEN REPLACE(chethnic,41,'Kinh')
+	WHEN chethnic=43 THEN REPLACE(chethnic,43,'Cham')
+	WHEN chethnic=44 THEN REPLACE(chethnic,44,'Ede')
+	WHEN chethnic=45 THEN REPLACE(chethnic,45,'Bana')
+	WHEN chethnic=46 THEN REPLACE(chethnic,46,'Nung')
+	WHEN chethnic=47 THEN REPLACE(chethnic,47,'Tay')
+	WHEN chethnic=48 THEN REPLACE(chethnic,48,'Dao')
+	WHEN chethnic=42 THEN REPLACE(chethnic,42,'HMong')
+	ELSE NULL
+	END AS 'ethnicity',
+CASE
+	WHEN chldrel=1 THEN REPLACE(chldrel,1,'christian')
+	WHEN chldrel=2 THEN REPLACE(chldrel,2,'muslim')
+	WHEN chldrel=3 THEN REPLACE(chldrel,3,'buddhist')
+	WHEN chldrel=4 THEN REPLACE(chldrel,4,'hindu')
+	WHEN chldrel=5 THEN REPLACE(chldrel,5,'catholic')
+	WHEN chldrel=6 THEN REPLACE(chldrel,6,'protestant')
+	WHEN chldrel=7 THEN REPLACE(chldrel,7,'orthodox')
+	WHEN chldrel=8 THEN REPLACE(chldrel,8,'sikh')
+	WHEN chldrel=9 THEN REPLACE(chldrel,9,'evangelist')
+	WHEN chldrel=10 THEN REPLACE(chldrel,10,'mormon')
+	WHEN chldrel=11 THEN REPLACE(chldrel,11,'ancestor worship')
+	WHEN chldrel=12 THEN REPLACE(chldrel,12,'hao hao')
+	WHEN chldrel=13 THEN REPLACE(chldrel,13,'cao dai')
+	WHEN chldrel=14 THEN REPLACE(chldrel,14,'none')
+	WHEN chldrel=15 THEN REPLACE(chldrel,15,'other')
+	ELSE NULL
+	END AS 'religion'
+INTO Young_Lives.poverty.child_general_info
+FROM Young_Lives.dbo.all_countries
+WHERE [round]=1
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+---create table containing child health data
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+CASE
+	WHEN inround=0 THEN REPLACE(inround,0,'No')
+	WHEN inround=1 THEN REPLACE(inround,1,'Yes')
+	ELSE NULL
+	END AS 'child_present_in_survey_round',
+dint AS 'date_of_interview',
+CASE
+	WHEN deceased=1 THEN REPLACE(deceased,1,'Yes')
+	WHEN deceased=0 THEN REPLACE(deceased,0,'No')
+	ELSE NULL
+	END AS 'deceased',
+CASE
+	WHEN agemon=-9999 THEN REPLACE(agemon,-9999,NULL)
+	WHEN agemon=0 THEN REPLACE(agemon,0,NULL)
+	ELSE CAST(agemon AS decimal)
+	END AS 'age_months',
+CASE
+	WHEN chweight=-9999 THEN REPLACE(chweight,-9999,NULL)
+	ELSE CAST(chweight AS decimal)
+	END AS 'weight_kg',
+CASE 
+	WHEN chheight=-9999 THEN REPLACE(chheight,-9999,NULL)
+	ELSE CAST(chheight AS NUMERIC)
+	END AS 'height_cm',
+CAST(bmi AS decimal) AS 'bmi',
+CASE 
+	WHEN underweight=0 THEN REPLACE(underweight,0,'not')
+	WHEN underweight=1 THEN REPLACE(underweight,1,'moderately')
+	WHEN underweight=2 THEN REPLACE(underweight,2,'severely')
+	ELSE NULL
+	END AS 'underweight',
+CASE
+	WHEN stunting=0 THEN REPLACE(stunting,0,'not')
+	WHEN stunting=1 THEN REPLACE(stunting,1,'moderately')
+	WHEN stunting=2 THEN REPLACE(stunting,2,'severely')
+	ELSE NULL
+	END AS 'stunting',
+CASE
+	WHEN thinness=0 THEN REPLACE(thinness,0,'not')
+	WHEN thinness=1 THEN REPLACE(thinness,1,'moderately')
+	WHEN thinness=2 THEN REPLACE(thinness,2,'severely')
+	ELSE NULL
+	END AS 'thinness',
+CASE
+	WHEN bwght=-9999 THEN REPLACE(bwght,-9999,NULL)
+	ELSE CAST(bwght AS decimal)
+	END AS 'birth_weight',
+CASE 
+	WHEN numante=88 THEN REPLACE(numante,88,NULL)
+	WHEN numante=99 THEN REPLACE(numante,99,NULL)
+	ELSE CAST(numante AS NUMERIC)
+	END AS 'mother_antenatal_visits',
+CASE
+	WHEN delivery=1 THEN REPLACE(delivery,1,'Yes')
+	WHEN delivery=0 THEN REPLACE(delivery,0,'No')
+	ELSE NULL
+	END AS 'skilled_professional_at_delivery',
+CASE 
+	WHEN tetanus=1 THEN REPLACE(tetanus,1,'Yes')
+	WHEN tetanus=0 THEN REPLACE(tetanus,0,'No')
+	ELSE NULL
+	END AS 'mother_tetanus_vaccine',
+CASE 
+	WHEN bcg=1 THEN REPLACE(bcg,1,'Yes')
+	WHEN bcg=0 THEN REPLACE(bcg,0,'No')
+	ELSE NULL
+	END AS 'bcg_vaccine',
+CASE 
+	WHEN measles=1 THEN REPLACE(measles,1,'Yes')
+	WHEN measles=0 THEN REPLACE(measles,0,'No')
+	ELSE NULL
+	END AS 'measles_vaccine',
+CASE 
+	WHEN dpt=1 THEN REPLACE(dpt,1,'Yes')
+	WHEN dpt=0 THEN REPLACE(dpt,0,'No')
+	ELSE NULL
+	END AS 'dpt_vaccine',
+CASE 
+	WHEN polio=1 THEN REPLACE(polio,1,'Yes')
+	WHEN polio=0 THEN REPLACE(polio,0,'No')
+	ELSE NULL
+	END AS 'polio_vaccine',
+CASE
+	WHEN hib=1 THEN REPLACE(hib,1,'Yes')
+	WHEN hib=0 THEN REPLACE(hib,0,'No')
+	ELSE NULL
+	END AS 'hib_vaccine',
+CASE
+	WHEN chmightdie=1 THEN REPLACE(chmightdie,1,'Yes')
+	WHEN chmightdie=0 THEN REPLACE(chmightdie,0,'No')
+	ELSE NULL
+	END AS 'thought_child_might_die',
+CASE
+	WHEN chillness=1 THEN REPLACE(chillness,1,'Yes')
+	WHEN chillness=0 THEN REPLACE(chillness,0,'No')
+	ELSE NULL
+	END AS 'had_serious_illness',
+CASE
+	WHEN chinjury=1 THEN REPLACE(chinjury,1,'Yes')
+	WHEN chinjury=0 THEN REPLACE(chinjury,0,'No')
+	ELSE NULL
+	END AS 'had_serious_injury',
+CASE
+	WHEN chhprob=1 THEN REPLACE(chhprob,1,'Yes')
+	WHEN chhprob=0 THEN REPLACE(chhprob,0,'No')
+	ELSE NULL
+	END AS 'longterm_health_problem',
+CASE
+	WHEN chdisability=1 THEN REPLACE(chdisability,1,'Yes')
+	WHEN chdisability=0 THEN REPLACE(chdisability,0,'No')
+	ELSE NULL
+	END AS 'permanent_disability',
+CASE
+	WHEN chdisscale=0 THEN REPLACE(chdisscale,0,'Work same as others')
+	WHEN chdisscale=1 THEN REPLACE(chdisscale,1,'Full-time work, physical work difficulty')
+	WHEN chdisscale=2 THEN REPLACE(chdisscale,2,'Full-time work, no physical work')
+	WHEN chdisscale=3 THEN REPLACE(chdisscale,3,'Part-time light work')
+	WHEN chdisscale=4 THEN REPLACE(chdisscale,4,'Cannot work, care for self')
+	WHEN chdisscale=5 THEN REPLACE(chdisscale,5,'Cannot work, help caring for self')
+	WHEN chdisscale=6 THEN REPLACE(chdisscale,6,'Other')
+	ELSE NULL
+	END AS 'permanent_disability_scale',
+CASE
+	WHEN chsmoke=1 THEN REPLACE(chsmoke,1,'Every day')
+	WHEN chsmoke=2 THEN REPLACE(chsmoke,2,'Weekly')
+	WHEN chsmoke=3 THEN REPLACE(chsmoke,3,'Monthly')
+	WHEN chsmoke=4 THEN REPLACE(chsmoke,4,'Hardly ever')
+	WHEN chsmoke=5 THEN REPLACE(chsmoke,5,'Never')
+	ELSE NULL
+	END AS 'smoking_frequency',
+CASE 
+	WHEN chalcohol=1 THEN REPLACE(chalcohol,1,'Yes')
+	WHEN chalcohol=0 THEN REPLACE(chalcohol,0,'No')
+	ELSE NULL
+	END AS 'alcohol_daily_weekly',
+CAST(cladder AS NUMERIC) AS 'subjective_wellbeing',
+CASE 
+	WHEN chhrel=1 THEN REPLACE(chhrel,1,'Same')
+	WHEN chhrel=2 THEN REPLACE(chhrel,2,'Better')
+	WHEN chhrel=3 THEN REPLACE(chhrel,3,'Worse')
+	ELSE NULL
+	END AS 'health_compared_peers',
+CASE 
+	WHEN chhealth=1 THEN REPLACE(chhealth,1,'Very poor')
+	WHEN chhealth=2 THEN REPLACE(chhealth,2,'Poor')
+	WHEN chhealth=3 THEN REPLACE(chhealth,3,'Average')
+	WHEN chhealth=4 THEN REPLACE(chhealth,4,'Good')
+	WHEN chhealth=5 THEN REPLACE(chhealth,5,'Very good')
+	ELSE NULL
+	END AS 'general_health'
+INTO Young_Lives.poverty.child_health
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+
+--create table containing child sex education data
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+CASE
+	WHEN marrcohab=1 THEN REPLACE(marrcohab,1,'Yes')
+	WHEN marrcohab=0 THEN REPLACE(marrcohab,0,'No')
+	ELSE NULL
+	END AS 'child_married_or_cohabitated',
+CAST(marrcohab_age AS decimal) AS 'age_married_or_cohabitated',
+CASE
+	WHEN birth=1 THEN REPLACE(birth,1,'Yes')
+	WHEN birth=0 THEN REPLACE(birth,0,'No')
+	ELSE NULL
+	END AS 'has_child',
+CAST(birth_age AS DECIMAL) AS 'age_first_child_born',
+CAST(chrephealth1 AS NUMERIC) AS 'sexual_health_correct_responses',
+CASE
+	WHEN chrephealth2=1 THEN REPLACE(chrephealth2,1,'Yes')
+	WHEN chrephealth2=0 THEN REPLACE(chrephealth2,0,'No')
+	ELSE NULL
+	END AS 'know_condom_disease_prevention',
+CASE 
+	WHEN chrephealth3=1 THEN REPLACE(chrephealth3,1,'Yes')
+	WHEN chrephealth3=0 THEN REPLACE(chrephealth3,0,'No')
+	ELSE NULL
+	END AS 'know_healthy_people_pass_STD',
+CASE
+	WHEN chrephealth4=1 THEN REPLACE(chrephealth4,1,'Shop')
+	WHEN chrephealth4=2 THEN REPLACE(chrephealth4,2,'Health facility')
+	WHEN chrephealth4=3 THEN REPLACE(chrephealth4,3,'Other')
+	WHEN chrephealth4=4 THEN REPLACE(chrephealth4,4,'Do not know')
+	ELSE NULL
+	END AS 'condom_source'
+INTO Young_Lives.poverty.child_sex_education
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+
+---create table containing child time-use data
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+CAST(hsleep AS DECIMAL) AS 'hours_sleeping',
+CAST(hcare AS DECIMAL) AS 'hours_caring_family',
+CAST(hchore AS DECIMAL) AS 'hours_chores',
+CAST(htask AS DECIMAL) AS 'hours_domestic_task',
+CAST(hwork AS DECIMAL) AS 'hours_paid_work',
+CAST(hschool AS DECIMAL) AS 'hours_school',
+CAST(hstudy AS DECIMAL) AS 'hours_studying',
+CAST(hplay AS DECIMAL) AS 'hours_leisure',
+CAST(commwork AS DECIMAL) AS 'minutes_total_work_commute',
+CAST(commsch AS DECIMAL) AS 'minutes_total_school_commute'
+INTO Young_Lives.poverty.daily_activity
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+
+--create table containg child education data
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+CASE
+	WHEN preprim=1 THEN REPLACE(preprim,1,'Yes')
+	WHEN preprim=0 THEN REPLACE(preprim,0,'No')
+	ELSE NULL
+	END AS 'attended_preprimary',
+CAST(agegr1 AS DECIMAL) AS 'age_started_grade1',
+CASE 
+	WHEN enrol=1 THEN REPLACE(enrol,1,'Yes')
+	WHEN enrol=0 THEN REPLACE(enrol,0,'No')
+	ELSE NULL
+	END AS 'currently_enrolled',
+CASE
+	WHEN engrade=1 THEN REPLACE(engrade,1,'Grade 1')
+	WHEN engrade=0 THEN REPLACE(engrade,0,'None')
+	WHEN engrade=2 THEN REPLACE(engrade,2,'Grade 2')
+	WHEN engrade=3 THEN REPLACE(engrade,3,'Grade 3')
+	WHEN engrade=4 THEN REPLACE(engrade,4,'Grade 4')
+	WHEN engrade=5 THEN REPLACE(engrade,5,'Grade 5')
+	WHEN engrade=6 THEN REPLACE(engrade,6,'Grade 6')
+	WHEN engrade=7 THEN REPLACE(engrade,7,'Grade 7')
+	WHEN engrade=8 THEN REPLACE(engrade,8,'Grade 8')
+	WHEN engrade=9 THEN REPLACE(engrade,9,'Grade 9')
+	WHEN engrade=10 THEN REPLACE(engrade,10,'Grade 10')
+	WHEN engrade=11 THEN REPLACE(engrade,11,'Grade 11')
+	WHEN engrade=12 THEN REPLACE(engrade,12,'Grade 12')
+	WHEN engrade=100 THEN REPLACE(engrade,100,'Pre-primary')
+	
+	WHEN engrade=13 AND childid LIKE 'ET%' THEN REPLACE(engrade,13,'First cycle of primary teaching certificate 1st year')
+	WHEN engrade=14 AND childid LIKE 'ET%' THEN REPLACE(engrade,14,'First cycle of primary teaching certificate 2nd year')
+	WHEN engrade=16 AND childid LIKE 'ET%' THEN REPLACE(engrade,16,'Second cycle of primary teaching certificate 1st year')
+	WHEN engrade=17 AND childid LIKE 'ET%' THEN REPLACE(engrade,17,'Second cycle of primary teaching certificate 2nd year')
+	WHEN engrade=21 AND childid LIKE 'ET%' THEN REPLACE(engrade,21,'TVET/1st year/level')
+	WHEN engrade=22 AND childid LIKE 'ET%' THEN REPLACE(engrade,22,'TVET/2nd year/level')
+	WHEN engrade=23 AND childid LIKE 'ET%' THEN REPLACE(engrade,23,'TVET/3rd year/level')
+	WHEN engrade=24 AND childid LIKE 'ET%' THEN REPLACE(engrade,24,'TVET/4th year/level')
+	WHEN engrade=25 AND childid LIKE 'ET%' THEN REPLACE(engrade,25,'Secondary education, teacher (diploma holder)/1st year')
+	WHEN engrade=26 AND childid LIKE 'ET%' THEN REPLACE(engrade,26,'Secondary education, teacher (diploma holder)/2nd year')
+	WHEN engrade=27 AND childid LIKE 'ET%' THEN REPLACE(engrade,27,'Secondary education, teacher (bachelors degree holder and above)/1st year')
+	WHEN engrade=28 AND childid LIKE 'ET%' THEN REPLACE(engrade,28,'Secondary education, teacher (bachelors degree holder and above)/2nd year')
+	WHEN engrade=29 AND childid LIKE 'ET%' THEN REPLACE(engrade,29,'Secondary education, teacher (bachelors degree holder and above)/3rd year')
+	WHEN engrade=31 AND childid LIKE 'ET%' THEN REPLACE(engrade,31,'Preschool teacher certificate (6 months to one year)')
+	WHEN engrade=32 AND childid LIKE 'ET%' THEN REPLACE(engrade,32,'Undergraduate degree (1st year, regular)')
+	WHEN engrade=33 AND childid LIKE 'ET%' THEN REPLACE(engrade,33,'Undergraduate degree (2nd year, regular)')
+	WHEN engrade=34 AND childid LIKE 'ET%' THEN REPLACE(engrade,34,'Undergraduate degree (3rd year, regular)')
+	WHEN engrade=35 AND childid LIKE 'ET%' THEN REPLACE(engrade,35,'Undergraduate degree (4th year, regular)')
+	WHEN engrade=36 AND childid LIKE 'ET%' THEN REPLACE(engrade,36,'Undergraduate degree (1st year, non-regular)')
+	WHEN engrade=37 AND childid LIKE 'ET%' THEN REPLACE(engrade,37,'Undergraduate degree (2nd year, non-regular)')
+	WHEN engrade=38 AND childid LIKE 'ET%' THEN REPLACE(engrade,38,'Undergraduate degree (3rd year, non-regular)')
+	WHEN engrade=39 AND childid LIKE 'ET%' THEN REPLACE(engrade,39,'Undergraduate degree (4th year, non-regular)')
+	WHEN engrade=40 AND childid LIKE 'ET%' THEN REPLACE(engrade,40,'Masters/Doctoral')
+	WHEN engrade=41 AND childid LIKE 'ET%' THEN REPLACE(engrade,41,'Others')
+	
+	WHEN engrade=13 AND childid LIKE 'IN%' THEN REPLACE(engrade,13,'Post-secondary/techological institute')
+	WHEN engrade=14 AND childid LIKE 'IN%' THEN REPLACE(engrade,14,'Vocational')
+	WHEN engrade=15 AND childid LIKE 'IN%' THEN REPLACE(engrade,15,'Undergraduate degree')
+	WHEN engrade=16 AND childid LIKE 'IN%' THEN REPLACE(engrade,16,'Postgraduate degree')
+	WHEN engrade=28 AND childid LIKE 'IN%' THEN REPLACE(engrade,28,'Adult literacy')
+	WHEN engrade=29 AND childid LIKE 'IN%' THEN REPLACE(engrade,29,'Religious education')
+	
+	WHEN engrade=13 AND childid LIKE 'PE%' THEN REPLACE(engrade,13,'Techical/pedagogical institute, incomplete')
+	WHEN engrade=14 AND childid LIKE 'PE%' THEN REPLACE(engrade,14,'Techical/pedagogical institute, incomplete')
+	WHEN engrade=15 AND childid LIKE 'PE%' THEN REPLACE(engrade,15,'University, incomplete')
+	WHEN engrade=16 AND childid LIKE 'PE%' THEN REPLACE(engrade,16,'University, complete')
+	WHEN engrade=17 AND childid LIKE 'PE%' THEN REPLACE(engrade,17,'Adult literacy program')
+	WHEN engrade=18 AND childid LIKE 'PE%' THEN REPLACE(engrade,18,'Other')
+	WHEN engrade=19 AND childid LIKE 'PE%' THEN REPLACE(engrade,19,'Masters/Doctoral')
+	WHEN engrade=20 AND childid LIKE 'PE%' THEN REPLACE(engrade,20,'Formal/informal preschool')
+	WHEN engrade=21 AND childid LIKE 'PE%' THEN REPLACE(engrade,21,'Incomplete Cent. Tecnico Productivo CETPRO/ Cent. Edu. Ocupacional CEO')
+	WHEN engrade=22 AND childid LIKE 'PE%' THEN REPLACE(engrade,22,'Complete Cent. Tecnico Productivo CETPRO/ Cent. Edu. Ocupacional CEO')
+	
+	WHEN engrade=13 AND childid LIKE 'VN%' THEN REPLACE(engrade,13,'Short-term vocational training')
+	WHEN engrade=14 AND childid LIKE 'VN%' THEN REPLACE(engrade,14,'Vocational Secondary School (1st year)')
+	WHEN engrade=15 AND childid LIKE 'VN%' THEN REPLACE(engrade,15,'Vocational Secondary School (2nd year)')
+	WHEN engrade=16 AND childid LIKE 'VN%' THEN REPLACE(engrade,16,'Vocational Secondary School completion')
+	WHEN engrade=17 AND childid LIKE 'VN%' THEN REPLACE(engrade,17,'Professional Secondary (1st year)')
+	WHEN engrade=18 AND childid LIKE 'VN%' THEN REPLACE(engrade,18,'Professional Secondary (2nd year)')
+	WHEN engrade=19 AND childid LIKE 'VN%' THEN REPLACE(engrade,19,'Professional Secondary (3rd year)')
+	WHEN engrade=20 AND childid LIKE 'VN%' THEN REPLACE(engrade,20,'Professional Secondary completion')
+	WHEN engrade=21 AND childid LIKE 'VN%' THEN REPLACE(engrade,21,'Vocational College (1st year)')
+	WHEN engrade=22 AND childid LIKE 'VN%' THEN REPLACE(engrade,22,'Vocational College (2nd year)')
+	WHEN engrade=23 AND childid LIKE 'VN%' THEN REPLACE(engrade,23,'Vocational College completion')
+	WHEN engrade=24 AND childid LIKE 'VN%' THEN REPLACE(engrade,24,'College education (1st year)')
+	WHEN engrade=25 AND childid LIKE 'VN%' THEN REPLACE(engrade,25,'College education (2nd year)')
+	WHEN engrade=26 AND childid LIKE 'VN%' THEN REPLACE(engrade,26,'College education completion')
+	WHEN engrade=27 AND childid LIKE 'VN%' THEN REPLACE(engrade,27,'College, part-time')
+	WHEN engrade=28 AND childid LIKE 'VN%' THEN REPLACE(engrade,28,'Undergraduate degree, part-time')
+	WHEN engrade=29 AND childid LIKE 'VN%' THEN REPLACE(engrade,29,'University education (undergraduate 1st year)')
+	WHEN engrade=30 AND childid LIKE 'VN%' THEN REPLACE(engrade,30,'University education (undergraduate 2nd year)')
+	WHEN engrade=31 AND childid LIKE 'VN%' THEN REPLACE(engrade,31,'University education (undergraduate 3rd year)')
+	WHEN engrade=32 AND childid LIKE 'VN%' THEN REPLACE(engrade,32,'University education (undergraduate 4th year)')
+	WHEN engrade=33 AND childid LIKE 'VN%' THEN REPLACE(engrade,33,'University education (undergraduate 5th year)')
+	WHEN engrade=34 AND childid LIKE 'VN%' THEN REPLACE(engrade,34,'University education completion')
+	WHEN engrade=35 AND childid LIKE 'VN%' THEN REPLACE(engrade,35,'Postgraduate education')
+	WHEN engrade=36 AND childid LIKE 'VN%' THEN REPLACE(engrade,36,'Postgraduate completion')
+	WHEN engrade=37 AND childid LIKE 'VN%' THEN REPLACE(engrade,37,'Centre for continued education')
+	WHEN engrade=38 AND childid LIKE 'VN%' THEN REPLACE(engrade,38,'Other')
+	WHEN engrade=50 AND childid LIKE 'VN%' THEN REPLACE(engrade,50,'Pre-primary')
+	ELSE NULL
+	END AS 'current_enrolled_grade',
+CASE
+	WHEN entype=1 AND childid LIKE 'ET%' THEN REPLACE(entype,1,'Private')
+	WHEN entype=2 AND childid LIKE 'ET%' THEN REPLACE(entype,2,'Public')
+	WHEN entype=3 AND childid LIKE 'ET%' THEN REPLACE(entype,3,'Community')
+	WHEN entype=4 AND childid LIKE 'ET%' THEN REPLACE(entype,4,'Government funded')
+	WHEN entype=5 AND childid LIKE 'ET%' THEN REPLACE(entype,5,'Other')
+
+	WHEN entype=1 AND childid LIKE 'IN%' THEN REPLACE(entype,1,'Private')
+	WHEN entype=2 AND childid LIKE 'IN%' THEN REPLACE(entype,2,'NGO/charity/religious')
+	WHEN entype=3 AND childid LIKE 'IN%' THEN REPLACE(entype,3,'Government funded')
+	WHEN entype=4 AND childid LIKE 'IN%' THEN REPLACE(entype,4,'informal/non-formal community')
+	WHEN entype=5 AND childid LIKE 'IN%' THEN REPLACE(entype,5,'Vocational school')
+	WHEN entype=6 AND childid LIKE 'IN%' THEN REPLACE(entype,6,'Charitable trust')
+	WHEN entype=7 AND childid LIKE 'IN%' THEN REPLACE(entype,7,'Bridge school')
+	WHEN entype=8 AND childid LIKE 'IN%' THEN REPLACE(entype,8,'Public & private mix')
+	WHEN entype=9 AND childid LIKE 'IN%' THEN REPLACE(entype,9,'Branch school')
+	WHEN entype=10 AND childid LIKE 'IN%' THEN REPLACE(entype,5,'Main school')
+	WHEN entype=11 AND childid LIKE 'IN%' THEN REPLACE(entype,11,'Other')
+	
+	WHEN entype=1 AND childid LIKE 'PE%' THEN REPLACE(entype,1,'Private')
+	WHEN entype=2 AND childid LIKE 'PE%' THEN REPLACE(entype,2,'NGO/charity/religious')
+	WHEN entype=3 AND childid LIKE 'PE%' THEN REPLACE(entype,3,'Public')
+	WHEN entype=5 AND childid LIKE 'PE%' THEN REPLACE(entype,5,'Other')
+
+	WHEN entype=1 AND childid LIKE 'VN%' THEN REPLACE(entype,1,'Private')
+	WHEN entype=2 AND childid LIKE 'VN%' THEN REPLACE(entype,2,'GO/charity/religious')
+	WHEN entype=3 AND childid LIKE 'VN%' THEN REPLACE(entype,3,'Public')
+	WHEN entype=5 AND childid LIKE 'VN%' THEN REPLACE(entype,5,'Other')
+	WHEN entype=6 AND childid LIKE 'VN%' THEN REPLACE(entype,6,'Informal')
+	WHEN entype=7 AND childid LIKE 'VN%' THEN REPLACE(entype,7,'Public & private mix')
+	WHEN entype=8 AND childid LIKE 'VN%' THEN REPLACE(entype,8,'Centre for continuing information')
+
+	ELSE NULL
+	END AS 'school_type',
+
+CAST(timesch AS DECIMAL) AS 'travel_time_minutes',
+CASE
+	WHEN levlread=1 THEN REPLACE(levlread,1,'cannot read')
+	WHEN levlread=2 THEN REPLACE(levlread,2,'letters')
+	WHEN levlread=3 THEN REPLACE(levlread,3,'word')
+	WHEN levlread=4 THEN REPLACE(levlread,4,'sentence')
+	ELSE NULL
+	END AS 'reading_level',
+CASE 
+	WHEN levlwrit=1 THEN REPLACE(levlwrit,1,'no')
+	WHEN levlwrit=2 THEN REPLACE(levlwrit,2,'with difficulty/errors')
+	WHEN levlwrit=3 THEN REPLACE(levlwrit,3,'without difficulty/errors')
+	WHEN levlwrit=4 THEN REPLACE(levlwrit,4,'sentence')
+	ELSE NULL
+	END AS 'writing_level',
+CASE
+	WHEN literate=1 THEN REPLACE(literate,1,'Yes')
+	WHEN literate=0 THEN REPLACE(literate,0,'No')
+	ELSE NULL
+	END AS 'literate'
+INTO Young_Lives.poverty.child_education
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+--create table containing child family information
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+careid AS 'caregiver_id',
+CASE
+	WHEN caredu=0 THEN REPLACE(caredu,0,'None')
+	WHEN caredu=1 THEN REPLACE(caredu,1,'Grade 1')
+	WHEN caredu=2 THEN REPLACE(caredu,2,'Grade 2')
+	WHEN caredu=3 THEN REPLACE(caredu,3,'Grade 3')
+	WHEN caredu=4 THEN REPLACE(caredu,2,'Grade 4')
+	WHEN caredu=5 THEN REPLACE(caredu,5,'Grade 5')
+	WHEN caredu=6 THEN REPLACE(caredu,6,'Grade 6')
+	WHEN caredu=7 THEN REPLACE(caredu,7,'Grade 7')
+	WHEN caredu=8 THEN REPLACE(caredu,8,'Grade 8')
+	WHEN caredu=9 THEN REPLACE(caredu,9,'Grade 9')
+	WHEN caredu=10 THEN REPLACE(caredu,10,'Grade 10')
+	WHEN caredu=11 THEN REPLACE(caredu,11,'Grade 11')
+	WHEN caredu=12 THEN REPLACE(caredu,12,'Grade 12')
+	WHEN caredu=30 THEN REPLACE(caredu,30,'Other')
+	WHEN caredu=28 THEN REPLACE(caredu,28,'Adult literacy')
+	
+	WHEN caredu=13 AND childid LIKE 'PE%' THEN REPLACE(caredu,13,'Technical, pedagogical, CETPRO (incomplete)')
+	WHEN caredu=14 AND childid LIKE 'PE%' THEN REPLACE(caredu,14,'Technical, pedagogical, CETPRO (complete)')
+	WHEN caredu=15 AND childid LIKE 'PE%' THEN REPLACE(caredu,15,'University (complete)')
+	WHEN caredu=16 AND childid LIKE 'PE%' THEN REPLACE(caredu,16,'University (incomplete)')
+	
+	WHEN caredu=13 AND childid NOT LIKE 'PE%' THEN REPLACE(caredu,13,'Post-secondary vocational')
+	WHEN caredu=14 AND childid NOT LIKE 'PE%' THEN REPLACE(caredu,14,'University')
+	WHEN caredu=15 AND childid NOT LIKE 'PE%' THEN REPLACE(caredu,15,'Masters doctorate')
+	WHEN caredu=29 THEN REPLACE(caredu,29,'Religious education')
+	ELSE NULL
+	END AS 'caregiver_eduction',
+CASE 
+	WHEN carehead=1 THEN REPLACE(carehead,1,'Is household head')
+	WHEN carehead=2 THEN REPLACE(carehead,2,'Partner of household head')
+	WHEN carehead=3 THEN REPLACE(carehead,3,'Other')
+	ELSE NULL
+	END AS 'caregiver_householdhead_relationship',
+CASE 
+	WHEN careage=-9999 THEN REPLACE(careage,-9999,NULL)
+	ELSE CAST(careage AS DECIMAL)
+	END AS 'caregiver_age',
+CASE
+	WHEN caresex=1 THEN REPLACE(caresex,1,'Male')
+	WHEN caresex=2 THEN REPLACE(caresex,2,'Female')
+	ELSE NULL
+	END AS 'caregiver_sex',
+CASE 
+	WHEN carerel=0 THEN REPLACE(carerel,0,'Child themself')
+	WHEN carerel=1 THEN REPLACE(carerel,1,'Biological parent')
+	WHEN carerel=2 THEN REPLACE(carerel,2,'Non-biological parent')
+	WHEN carerel=3 THEN REPLACE(carerel,3,'Grandparent')
+	WHEN carerel=4 THEN REPLACE(carerel,4,'Uncle/Aunt')
+	WHEN carerel=5 THEN REPLACE(carerel,5,'Sibling')
+	WHEN carerel=6 THEN REPLACE(carerel,6,'Other, relative')
+	WHEN carerel=7 THEN REPLACE(carerel,7,'Other, non-relative')
+	WHEN carerel=8 THEN REPLACE(carerel,8,'Partner/Spouse')
+	WHEN carerel=9 THEN REPLACE(carerel,9,'Father-in-law/Mother-in-law')
+	ELSE NULL
+	END AS 'caregiver_relationship',
+CASE 
+	WHEN carecantread=0 THEN REPLACE(carecantread,0,'Yes')
+	WHEN carecantread=1 THEN REPLACE(carecantread,1,'No')
+	ELSE NULL
+	END AS 'caregiver_literate',
+CAST(careladder AS NUMERIC) AS 'caregiver_subjective_wellbeing',
+CAST(careldr4yrs AS NUMERIC) AS 'caregiver_subjective_wellbeing_4yrs_on',
+dadid AS 'father_id',
+CASE
+	WHEN dadedu=0 THEN REPLACE(dadedu,0,'None')
+	WHEN dadedu=1 THEN REPLACE(dadedu,1,'Grade 1')
+	WHEN dadedu=2 THEN REPLACE(dadedu,2,'Grade 2')
+	WHEN dadedu=3 THEN REPLACE(dadedu,3,'Grade 3')
+	WHEN dadedu=4 THEN REPLACE(dadedu,2,'Grade 4')
+	WHEN dadedu=5 THEN REPLACE(dadedu,5,'Grade 5')
+	WHEN dadedu=6 THEN REPLACE(dadedu,6,'Grade 6')
+	WHEN dadedu=7 THEN REPLACE(dadedu,7,'Grade 7')
+	WHEN dadedu=8 THEN REPLACE(dadedu,8,'Grade 8')
+	WHEN dadedu=9 THEN REPLACE(dadedu,9,'Grade 9')
+	WHEN dadedu=10 THEN REPLACE(dadedu,10,'Grade 10')
+	WHEN dadedu=11 THEN REPLACE(dadedu,11,'Grade 11')
+	WHEN dadedu=12 THEN REPLACE(dadedu,12,'Grade 12')
+	
+	WHEN dadedu=13 AND childid LIKE 'PE%' THEN REPLACE(dadedu,13,'Technical, pedagogical, CETPRO (incomplete)')
+	WHEN dadedu=14 AND childid LIKE 'PE%' THEN REPLACE(dadedu,14,'Technical, pedagogical, CETPRO (complete)')
+	WHEN dadedu=15 AND childid LIKE 'PE%' THEN REPLACE(dadedu,15,'University (complete)')
+	WHEN dadedu=16 AND childid LIKE 'PE%' THEN REPLACE(dadedu,16,'University (incomplete)')
+	
+	WHEN dadedu=13 AND childid NOT LIKE 'PE%' THEN REPLACE(dadedu,13,'Post-secondary vocational')
+	WHEN dadedu=14 AND childid NOT LIKE 'PE%' THEN REPLACE(dadedu,14,'University')
+	WHEN dadedu=15 AND childid NOT LIKE 'PE%' THEN REPLACE(dadedu,15,'Masters doctorate')
+	WHEN dadedu=28 THEN REPLACE(dadedu,28,'Adult literacy')
+	WHEN dadedu=29 THEN REPLACE(dadedu,29,'Religious education')
+	WHEN dadedu=30 THEN REPLACE(dadedu,30,'Other')
+	ELSE NULL
+	END AS 'father_education',
+CASE
+	WHEN dadlive=1 THEN REPLACE(dadlive,1,'Lives in household')
+	WHEN dadlive=2 THEN REPLACE(dadlive,2,'Does not live in household')
+	WHEN dadlive=3 THEN REPLACE(dadlive,3,'Died')
+	ELSE NULL
+	END AS 'father_lives',
+CASE
+	WHEN dadage=-9999 THEN REPLACE(dadage,-9999,NULL)
+	ELSE CAST(dadage AS DECIMAL)
+	END AS 'father_age',
+CASE
+	WHEN dadcantread=0 THEN REPLACE(dadcantread,0,'Yes')
+	WHEN dadcantread=1 THEN REPLACE(dadcantread,1,'No')
+	ELSE NULL
+	END AS 'father_literate',
+dadyrdied AS 'year_father_died',
+momid AS 'mother_id',
+CASE
+	WHEN momedu=0 THEN REPLACE(momedu,0,'None')
+	WHEN momedu=1 THEN REPLACE(momedu,1,'Grade 1')
+	WHEN momedu=2 THEN REPLACE(momedu,2,'Grade 2')
+	WHEN momedu=3 THEN REPLACE(momedu,3,'Grade 3')
+	WHEN momedu=4 THEN REPLACE(momedu,2,'Grade 4')
+	WHEN momedu=5 THEN REPLACE(momedu,5,'Grade 5')
+	WHEN momedu=6 THEN REPLACE(momedu,6,'Grade 6')
+	WHEN momedu=7 THEN REPLACE(momedu,7,'Grade 7')
+	WHEN momedu=8 THEN REPLACE(momedu,8,'Grade 8')
+	WHEN momedu=9 THEN REPLACE(momedu,9,'Grade 9')
+	WHEN momedu=10 THEN REPLACE(momedu,10,'Grade 10')
+	WHEN momedu=11 THEN REPLACE(momedu,11,'Grade 11')
+	WHEN momedu=12 THEN REPLACE(momedu,12,'Grade 12')
+
+	WHEN momedu=13 AND childid LIKE 'PE%' THEN REPLACE(momedu,13,'Technical, pedagogical, CETPRO (incomplete)')
+	WHEN momedu=14 AND childid LIKE 'PE%' THEN REPLACE(momedu,14,'Technical, pedagogical, CETPRO (complete)')
+	WHEN momedu=15 AND childid LIKE 'PE%' THEN REPLACE(momedu,15,'University (complete)')
+	WHEN momedu=16 AND childid LIKE 'PE%' THEN REPLACE(momedu,16,'University (incomplete)')
+
+	WHEN momedu=13 AND childid NOT LIKE 'PE%' THEN REPLACE(momedu,13,'Post-secondary vocational')
+	WHEN momedu=14 AND childid NOT LIKE 'PE%' THEN REPLACE(momedu,14,'University')
+	WHEN momedu=15 AND childid NOT LIKE 'PE%' THEN REPLACE(momedu,15,'Masters doctorate')
+	WHEN momedu=28 THEN REPLACE(momedu,28,'Adult literacy')
+	WHEN momedu=29 THEN REPLACE(momedu,29,'Religious education')
+	WHEN momedu=30 THEN REPLACE(momedu,30,'Other')
+	ELSE NULL
+	END AS 'mother_eduction',
+CASE
+	WHEN momlive=1 THEN REPLACE(momlive,1,'Lives in household')
+	WHEN momlive=2 THEN REPLACE(momlive,2,'Does not live in household')
+	WHEN momlive=3 THEN REPLACE(momlive,3,'Died')
+	ELSE NULL
+	END AS 'mother_lives',
+CASE
+	WHEN momage=-9999 THEN REPLACE(momage,-9999,NULL)
+	ELSE CAST(momage AS DECIMAL)
+	END AS 'mother_age',
+CASE
+	WHEN momcantread=0 THEN REPLACE(momcantread,0,'Yes')
+	WHEN momcantread=1 THEN REPLACE(momcantread,1,'No')
+	ELSE NULL
+	END AS 'mother_literate',
+momyrdied AS 'year_mother_died',
+headid AS 'householdhead_id',
+CASE
+	WHEN headedu=0 THEN REPLACE(headedu,0,'None')
+	WHEN headedu=1 THEN REPLACE(headedu,1,'Grade 1')
+	WHEN headedu=2 THEN REPLACE(headedu,2,'Grade 2')
+	WHEN headedu=3 THEN REPLACE(headedu,3,'Grade 3')
+	WHEN headedu=4 THEN REPLACE(headedu,2,'Grade 4')
+	WHEN headedu=5 THEN REPLACE(headedu,5,'Grade 5')
+	WHEN headedu=6 THEN REPLACE(headedu,6,'Grade 6')
+	WHEN headedu=7 THEN REPLACE(headedu,7,'Grade 7')
+	WHEN headedu=8 THEN REPLACE(headedu,8,'Grade 8')
+	WHEN headedu=9 THEN REPLACE(headedu,9,'Grade 9')
+	WHEN headedu=10 THEN REPLACE(headedu,10,'Grade 10')
+	WHEN headedu=11 THEN REPLACE(headedu,11,'Grade 11')
+	WHEN headedu=12 THEN REPLACE(headedu,12,'Grade 12')
+
+	WHEN headedu=13 AND childid LIKE 'PE%' THEN REPLACE(headedu,13,'Technical, pedagogical, CETPRO (incomplete)')
+	WHEN headedu=14 AND childid LIKE 'PE%' THEN REPLACE(headedu,14,'Technical, pedagogical, CETPRO (complete)')
+	WHEN headedu=15 AND childid LIKE 'PE%' THEN REPLACE(headedu,15,'University (complete)')
+	WHEN headedu=15 AND childid LIKE 'PE%' THEN REPLACE(headedu,15,'University (incomplete)')
+
+	WHEN headedu=13 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,13,'Post-secondary vocational')
+	WHEN headedu=14 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,14,'University')
+	WHEN headedu=15 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,15,'Masters doctorate')
+	WHEN headedu=28 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,28,'Adult literacy')
+	WHEN headedu=29 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,29,'Religious education')
+	WHEN headedu=30 AND childid NOT LIKE 'PE%' THEN REPLACE(headedu,30,'Other')
+	ELSE NULL
+	END AS 'householdhead_education',
+CASE
+	WHEN headage=-9999 THEN REPLACE(headage,-9999,NULL)
+	ELSE CAST(headage AS DECIMAL)
+	END AS 'householdhead_age',
+CASE
+	WHEN headsex=1 THEN REPLACE(headsex,1,'Male')
+	WHEN headsex=2 THEN REPLACE(headsex,2,'Female')
+	ELSE NULL
+	END AS 'householdhead_sex',
+CASE
+	WHEN headrel=0 THEN REPLACE(headrel,0,'Child themself')
+	WHEN headrel=1 THEN REPLACE(headrel,1,'Biological parent')
+	WHEN headrel=2 THEN REPLACE(headrel,2,'Non-biological parent')
+	WHEN headrel=3 THEN REPLACE(headrel,3,'Grandparent')
+	WHEN headrel=4 THEN REPLACE(headrel,4,'Uncle/Aunt')
+	WHEN headrel=5 THEN REPLACE(headrel,5,'Sibling')
+	WHEN headrel=6 THEN REPLACE(headrel,6,'Other, relative')
+	WHEN headrel=7 THEN REPLACE(headrel,7,'Other, non-relative')
+	WHEN headrel=8 THEN REPLACE(headrel,8,'Partner/Spouse')
+	WHEN headrel=9 THEN REPLACE(headrel,9,'Father-in-law/Mother-in-law')
+	ELSE NULL
+	END AS 'householdhead_relationship'
+INTO Young_Lives.poverty.family_details
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+---create table containing child household information
+BEGIN
+BEGIN TRY
+SELECT
+childid AS 'child_id',
+[round] AS 'round',
+clustid AS 'sentinel_site_id',
+commid AS 'community_id',
+CASE 
+	WHEN typesite=1 THEN REPLACE(typesite, 1,'Urban')
+	WHEN typesite=2 THEN REPLACE(typesite,2,'Rural')
+	ELSE NULL
+	END AS 'area_type',
+CASE 
+		WHEN region=1 THEN REPLACE(region, 1,'Tigray')
+		WHEN region=2 THEN REPLACE(region, 2,'Afar')
+		WHEN region=3 THEN REPLACE(region, 3,'Amhara')
+		WHEN region=4 THEN REPLACE(region, 4,'Oromiya')
+		WHEN region=5 THEN REPLACE(region, 5,'Somali')
+		WHEN region=6 THEN REPLACE(region, 6,'Benshangul Gumz')
+		WHEN region=7 THEN REPLACE(region, 7,'SNNP')
+		WHEN region=12 THEN REPLACE(region, 12,'Gambela')
+		WHEN region=13 THEN REPLACE(region, 13,'Harari')
+		WHEN region=14 THEN REPLACE(region, 14,'Addis Ababa City Admin')
+		WHEN region=15 THEN REPLACE(region, 15,'Dire Dawa City Admin')
+		when region=32 then replace(region, 32,'Sierra')
+		when region=33 then replace(region, 33,'Selva')
+		when region=31 then replace(region, 31,'Costa')
+		WHEN region=24 THEN REPLACE(region, 24,'Other')
+		WHEN region=23 THEN REPLACE(region, 23,'Telangana')
+		WHEN region=22 THEN REPLACE(region, 22,'Rayalaseema')
+		WHEN region=21 THEN REPLACE(region, 21,'Coastal Andhra')
+		WHEN region=51 THEN REPLACE(region, 51,'Northern Uplands')
+		WHEN region=52 THEN REPLACE(region, 52,'Red River Delta')
+		WHEN region=53 THEN REPLACE(region, 53,'Phu Yen')
+		WHEN region=54 THEN REPLACE(region, 54,'Da Nang')
+		WHEN region=55 THEN REPLACE(region, 55,'Highlands')
+		WHEN region=56 THEN REPLACE(region, 56,'South Eastern')
+		WHEN region=57 THEN REPLACE(region, 57,'Mekong River Delta')
+		WHEN region=58 THEN REPLACE(region, 58,'Other')
+	ELSE NULL
+	END AS 'region',
+CASE 
+	WHEN childloc=1 THEN REPLACE(childloc,1,'Yes')
+	WHEN childloc=2 THEN REPLACE(childloc,0, 'No')
+	ELSE NULL
+	END AS 'child_lives_in_household',
+CAST(hhsize AS NUMERIC) AS 'household_size',
+(CAST(male05 AS NUMERIC)+CAST(male612 AS NUMERIC)+ CAST(male1317 AS NUMERIC)+CAST(male1860 AS NUMERIC)+CAST(male61 AS NUMERIC)) AS 'number_of_males',
+(CAST(female05 AS NUMERIC)+CAST(female612 AS NUMERIC)+CAST(female1317 AS NUMERIC)+CAST(female1860 AS NUMERIC)+CAST(female61 AS NUMERIC)) AS 'number_of_demales',
+CAST(wi_new AS FLOAT) AS 'wealth_index',
+CAST(hq_new AS FLOAT) AS 'housing_quality_index',
+CAST(sv_new AS FLOAT) AS 'access_to_services_index',
+CAST(cd_new AS FLOAT) AS 'consumer_durables_index',
+CASE 
+	WHEN drwaterq_new=0 THEN REPLACE(drwaterq_new,0,'No')
+	WHEN drwaterq_new=1 THEN REPLACE(drwaterq_new,1,'Yes')
+	ELSE NULL
+	END AS 'access_to_safe_drinking_water',
+CASE 
+	WHEN toiletq_new=0 THEN REPLACE(toiletq_new,0,'No')
+	WHEN toiletq_new=1 THEN REPLACE(toiletq_new,1,'Yes')
+	ELSE NULL
+	END AS 'access_to_sanitation',
+CASE  
+	WHEN elecq_new=0 THEN REPLACE(elecq_new,0,'No')
+	WHEN elecq_new=1 THEN REPLACE(elecq_new,1,'Yes')
+	ELSE NULL
+	END AS 'access_to_electricity',
+CASE 
+	WHEN cookingq_new=0 THEN REPLACE(cookingq_new,0,'No')
+	WHEN cookingq_new=1 THEN REPLACE(cookingq_new,1,'Yes')
+	ELSE NULL
+	END AS 'access_to_cooking_fuels',
+CASE 
+	WHEN aniany=0 THEN REPLACE(aniany,0,'No')
+	WHEN aniany=1 THEN REPLACE(aniany,1,'Yes')
+	ELSE NULL
+	END AS 'household_owned_livestock_past12mnths',
+CAST(animilk AS NUMERIC) AS 'number_of_milk_animals',
+CAST(anidrau AS NUMERIC) AS 'number_of_draft_animals',
+CAST(anirumi AS NUMERIC) AS 'number_of_small_rumiants_animals',
+CASE 
+	WHEN ownlandhse=0 THEN REPLACE(ownlandhse,0,'No')
+	WHEN ownlandhse=1 THEN REPLACE(ownlandhse,1,'Yes')
+	ELSE NULL
+	END AS 'household_own_land_house_on',
+CASE 
+	WHEN ownhouse=0 THEN REPLACE(ownhouse,0,'No')
+	WHEN ownhouse=1 THEN REPLACE(ownhouse,1,'Yes')
+	ELSE NULL
+	END AS 'household_own_house'
+INTO Young_Lives.poverty.household_info
+FROM Young_Lives.dbo.all_countries
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+
+---create keys and constraints
+
+ALTER TABLE Young_Lives.poverty.child_general_info ALTER COLUMN child_id nvarchar(255) NOT NULL
+
+ALTER TABLE Young_Lives.poverty.child_general_info
+ADD CONSTRAINT PK_gen_info PRIMARY KEY (child_id)
+
+ALTER TABLE Young_Lives.poverty.child_health
+ADD CONSTRAINT FK_health
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id)
+
+ALTER TABLE Young_Lives.poverty.child_education
+ADD CONSTRAINT FK_education
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id)
+
+ALTER TABLE Young_Lives.poverty.daily_activity
+ADD CONSTRAINT FK_daily_activity
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id)
+
+ALTER TABLE Young_Lives.poverty.family_details
+ADD CONSTRAINT FK_family
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id)
+
+ALTER TABLE Young_Lives.poverty.household_info
+ADD CONSTRAINT FK_household
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id)
+
+ALTER TABLE Young_Lives.poverty.child_sex_education
+ADD CONSTRAINT FK_sex_edu
+FOREIGN KEY (child_id) REFERENCES Young_Lives.poverty.child_general_info(child_id);
+
+
+
+---create trigger which prevents deletion from child general info table
+USE Young_Lives;
+GO
+CREATE OR ALTER TRIGGER poverty.not_delete_gen_info
+ON Young_Lives.poverty.child_general_info
+INSTEAD OF DELETE
+AS
+IF EXISTS (SELECT* FROM Young_Lives.poverty.child_general_info)
+DECLARE @Error NVARCHAR(100)
+SET	@Error = 'Cannot delete from this table'
+BEGIN
+RAISERROR(@Error, 16, 1 )
+ROLLBACK TRANSACTION
+END
+GO
+
+---poverty level function
+--- splits wealth index into level 1 to 5 using round and child_id
+USE Young_Lives;
+GO
+CREATE OR ALTER FUNCTION poverty.poverty_level
+	(@child_id nvarchar(250),
+	@round int)
+RETURNS int AS 
+	BEGIN;
+	DECLARE @wealth_index float;
+	DECLARE @poverty varchar(1);
+	SET @wealth_index = (SELECT wealth_index
+	FROM poverty.household_info
+	WHERE child_id=@child_id AND [round]=@round);
+	IF (@wealth_index <= 0.2) SET @poverty='1';
+	IF (@wealth_index <= 0.4 and @wealth_index >0.2) SET @poverty='2';
+	IF (@wealth_index <= 0.6 and @wealth_index >0.4) SET @poverty='3';
+	IF (@wealth_index <= 0.8 and @wealth_index >0.6) SET @poverty='4';
+	IF (@wealth_index <= 1.0 and @wealth_index >0.8) SET @poverty='5';
+	RETURN @poverty;
+END
+
+---function which creates country column from child_id
+USE Young_Lives;
+GO
+CREATE OR ALTER FUNCTION poverty.child_country (@child_id VARCHAR(250))
+RETURNS VARCHAR(20) AS
+BEGIN
+	DECLARE @country VARCHAR(20);
+	IF (@child_id LIKE 'ET%') SET @country='Ethiopia';
+	IF (@child_id LIKE 'IN%') SET @country='India';
+	IF (@child_id LIKE 'PE%') SET @country='Peru';
+	IF (@child_id LIKE 'VN%') SET @country='Vietnam';
+	RETURN @country
+END;
+
+
+
+---get list of children IDs and the number of rounds present using search criteria
+---stored procedure
+USE Young_Lives;
+GO
+CREATE OR ALTER PROCEDURE ps_childid_roundnumber
+    @country varchar(30) = NULL
+    ,@gender varchar(30) = NULL
+    ,@ethnicity varchar(30) = NULL
+    ,@religion varchar(30) = NULL
+AS
+SELECT ch.child_id, COUNT(he.round) AS [Number of rounds present]
+FROM Young_Lives.poverty.child_general_info ch
+INNER JOIN Young_Lives.poverty.child_health he
+ON ch.child_id=he.child_id
+WHERE (he.child_present_in_survey_round='Yes'
+      AND (@religion IS NULL OR ch.religion = @religion )
+      AND (@country IS NULL OR poverty.child_country(ch.child_id) = @country)
+      AND (@gender IS NULL OR ch.gender = @gender)
+      AND (@ethnicity IS NULL OR ch.ethnicity = @ethnicity))
+GROUP BY ch.child_id
+GO
+
+
+---Health implications view
+USE Young_Lives;
+GO
+CREATE OR ALTER VIEW poverty.v_health_implications AS
+SELECT hi.child_id, hi.round, poverty.child_country(hi.child_id) AS country, 
+poverty.poverty_level(hi.child_id,hi.round) AS poverty_index, ch.child_present_in_survey_round,
+ch.stunting, ch.thinness, ch.age_months, ch.underweight, ch.subjective_wellbeing,
+ch.deceased, ch.general_health, ch.longterm_health_problem, ch.had_serious_illness,
+ch.had_serious_injury, ch.thought_child_might_die
+FROM Young_Lives.poverty.household_info hi
+INNER JOIN Young_Lives_poverty.child_health ch 
+ON hi.child_id = ch.child_id AND hi.round=ch.round;
+
+/*report counting the frequency of thinness measurements 
+according to country and poverty_index*/
+SELECT country, poverty_index AS [Poverty Index], thinness, COUNT(thinness) AS [total children]
+FROM Young_Lives.poverty.v_health_implications
+GROUP BY country, poverty_index, thinness
+ORDER BY country, poverty_index, thinness;
+
+/*report counting the frequency of stunting measurements 
+according to country and poverty_index*/
+SELECT country, poverty_index AS [Poverty Index], stunting, COUNT(stunting) AS [total children]
+FROM Young_Lives.poverty.v_health_implications
+GROUP BY country, poverty_index, stunting
+ORDER BY country, poverty_index, stunting;
+
+/*report counting the frequency of underweight measurements 
+according to country and poverty_index*/
+SELECT country, poverty_index AS [Wealth Index], underweight, COUNT(underweight) AS [total children]
+FROM Young_Lives.poverty.v_health_implications
+GROUP BY country, poverty_index, underweight
+ORDER BY country, poverty_index, underweight;
+
+/*report measuring proportion of rounds children had illness/injury*/
+SELECT child_id, AVG(poverty_index) AS [Average Wealth Index], 
+(COUNT(longterm_health_problem)/COUNT(child_present_in_survey_round)) AS [proportion of rounds had longterm health condition], 
+(COUNT(had_serious_illness)/COUNT(child_present_in_survey_round)) AS [proportion of rounds had serious illness], 
+(COUNT(had_serious_injury)/COUNT(child_present_in_survey_round)) AS [proportion of rounds had serious injury],
+(COUNT(thought_child_might_die)/COUNT(child_present_in_survey_round)) AS [proportion of rounds thought might die]
+FROM Young_Lives.poverty.v_health_implications
+WHERE child_present_in_survey_round='Yes' AND longterm_health_problem = 'Yes' OR had_serious_illness = 'Yes' OR
+had_serious_injury = 'Yes' OR thought_child_might_die = 'Yes'
+GROUP BY child_id
+ORDER BY child_id;
+
+
+---Education and poverty view
+USE Young_Lives;
+GO
+CREATE OR ALTER VIEW poverty.v_education_implications AS
+SELECT ch.child_id,ce.round, ch.gender, hi.age_months, poverty.child_country(ch.child_id) AS country, 
+ce.currently_enrolled,ce.current_enrolled_grade, ce.school_type,
+ce.reading_level, ce.writing_level, ce.literate,
+da.hours_school, da.hours_studying, poverty.poverty_level(ce.child_id,ce.round) AS poverty_index
+FROM Young_Lives.poverty.child_education ce
+INNER JOIN poverty.daily_activity da
+ON ce.child_id = da.child_id AND ce.round=da.round
+INNER JOIN Young_Lives.poverty.child_general_info ch
+ON ch.child_id=da.child_id
+INNER JOIN poverty.child_health hi
+ON ch.child_id=hi.child_id;
+
+/*report measuring the average, minimum and maximum hours spent studying
+according to wealth index and country*/
+SELECT country, poverty_index as [Poverty index], current_enrolled_grade, AVG(hours_studying) AS [Average hours studying], 
+MIN(hours_studying) AS [Minimum hours studied], MAX(hours_studying) AS [Maximum hours studied]
+FROM Young_Lives.poverty.v_education_implications
+WHERE poverty_index IS NOT NULL
+GROUP BY country, poverty_index, current_enrolled_grade
+ORDER BY country,current_enrolled_grade, poverty_index;
+
+/*report measuring the percentage of children who dropped out 
+per wealth index per country*/
+SELECT a.country, a.poverty_index AS [Poverty index], 
+AVG(dropout_frequency) [Number dropped out], AVG(Total) AS [Total children],
+(AVG(CAST(dropout_frequency AS NUMERIC))/AVG(CAST(total AS NUMERIC))*100) AS [Percentage dropped out]
+FROM 
+((SELECT country, poverty_index, COUNT(DISTINCT child_id) AS Total
+FROM Young_Lives.poverty.v_education_implications
+WHERE poverty_index IS NOT NULL AND age_months < 204
+GROUP BY country, poverty_index
+) a
+INNER JOIN
+(SELECT country, poverty_index, COUNT(DISTINCT child_id) AS dropout_frequency
+FROM Young_Lives.poverty.v_education_implications
+WHERE currently_enrolled='No' AND poverty_index IS NOT NULL AND age_months < 204
+GROUP BY country, poverty_index) b
+ON a.country=b.country AND a.poverty_index=b.poverty_index)
+GROUP BY a.country, a.poverty_index
+ORDER BY a.country, a.poverty_index;
+
+

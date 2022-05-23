@@ -1,0 +1,269 @@
+
+--Create Crime_Profiler database
+USE master;
+GO
+CREATE DATABASE Crime_Profiler;
+
+--allow snapshot isolation concurrency control
+ALTER DATABASE Crime_Profiler  SET ALLOW_SNAPSHOT_ISOLATION ON;
+ALTER DATABASE Crime_Profiler SET READ_COMMITTED_SNAPSHOT ON;
+
+--Begin bulk inserting greater manchester files from directory
+--Create table to insert crime data into
+IF OBJECT_ID('Crime_Profiler.dbo.GM_Crime') IS NOT NULL DROP TABLE Crime_Profiler.dbo.GM_Crime
+USE Crime_Profiler;
+GO
+CREATE TABLE [GM_Crime] (
+[Crime ID] varchar(250) NULL,
+[Month] varchar(50) NULL,
+[Reported by] varchar(150) NULL,
+[Falls within] varchar(150) NULL,
+[Longitude] float NULL,
+[Latitude] float NULL,
+[Location] varchar(255) NULL,
+[LSOA code] varchar(150) NULL,
+[LSOA name] varchar(150) NULL,
+[Crime type] varchar(150) NULL,
+[Last outcome category] varchar(500) NULL,
+[Context] varchar(500) NULL
+);
+
+--create table to insert file names
+IF OBJECT_ID('TEMP_FILES') IS NOT NULL DROP TABLE TEMP_FILES
+CREATE TABLE TEMP_FILES
+(
+FileName VARCHAR(MAX),
+DEPTH VARCHAR(MAX),
+[FILE] VARCHAR(MAX)
+)
+---get file names from directory, insert into temp_files table and delete files which aren't greater manchester street crimes
+INSERT INTO TEMP_FILES
+EXEC xp_DirTree 'C:\Crime_reports\',0,1
+DELETE FROM TEMP_FILES WHERE FileName NOT LIKE '%greater-manchester-street.csv';
+
+--use file names in temp_files table to insert data from each file in directory
+--the folder the data is found in is required which is the first 7 characters of the filename
+--once the file is inserted it is then deleted from temp_files table 
+WHILE EXISTS(SELECT * FROM TEMP_FILES)
+BEGIN
+   BEGIN TRY
+	DECLARE @Folder VARCHAR(MAX)
+	DECLARE @Filename VARCHAR(MAX)
+	DECLARE @SQL VARCHAR(MAX)
+      SET @Filename = (SELECT TOP 1 FileName FROM TEMP_FILES)
+	  SET @Folder=(SELECT TOP 1 LEFT(FileName,7) FROM TEMP_FILES)
+      SET @SQL = 'BULK INSERT Crime_Profiler.dbo.GM_Crime
+      FROM ''C:\Crime_reports\'+ @Folder+'\'+ @Filename +'''
+      WITH (FIRSTROW = 2, FIELDTERMINATOR = '','', ROWTERMINATOR = ''\n'');'
+      EXEC(@SQL)
+
+   END TRY
+   BEGIN CATCH
+      PRINT 'Failed processing : ' + @Filename
+   END CATCH
+   DELETE FROM TEMP_FILES WHERE FileName = @Filename
+END;
+
+
+--begin joining LSOA-population tables with crime table
+--just population of male and female used as this can create the total population
+--age break-down of population grouped 
+IF OBJECT_ID('Crime_Profiler.dbo.GM_crime_population') IS NOT NULL DROP TABLE  Crime_Profiler.dbo.GM_crime_population
+
+BEGIN
+BEGIN TRY
+	SELECT c.[Crime ID], CAST((c.[Month]+'-01') AS date) AS [Month], c.[Reported by], c.[Falls within],
+	c.[Longitude], c.[Latitude], c.[Location], c.[LSOA code], c.[LSOA name], c.[Crime type],
+	c.[Last outcome category], c.[Context], CAST(f.[All Ages] AS numeric) AS [Total females], 
+	CAST((f.F5+f.F6+f.F8+f.F7+f.F9+f.F10+f.F11+f.F12+f.F13+f.F14+f.F15+f.F16+f.F17+f.F18+f.F19+f.F20+f.F21+f.F22) AS numeric) AS [Females Under 18],
+	CAST((f.F23+f.F24+f.F25+f.F26+f.F27+f.F28+f.F29+f.F30+f.F31+f.F32+f.F33+f.F34) AS numeric) AS [Females 18-29],
+	CAST((f.F35+f.F36+f.F37+f.F38+f.F39+f.F40+f.F41+f.F42+f.F43+f.F44) AS numeric) AS [Females 30-39],
+	CAST((f.F45+f.F46+f.F47+f.F48+f.F49+f.F50+f.F51+f.F52+f.F53+f.F54) AS numeric) AS [Females 40-49],
+	CAST((f.F55+f.F56+f.F57+f.F58+f.F59+f.F60+f.F61+f.F62+f.F63+f.F64) AS numeric) AS [Females 50-59],
+	CAST((f.F65+f.F66+f.F67+f.F68+f.F69+f.F70+f.F71+f.F72+f.F73+f.F74) AS numeric) AS [Females 60-69],
+	CAST((f.F75+f.F76+f.F77+f.F78+f.F79+f.F80+f.F81+f.F82+f.F83+f.F84+
+	f.F85+f.F86+f.F87+f.F88+f.F89+f.F90+f.F91+f.F92+f.F93+f.[90+]) AS numeric) AS [Females 70+],
+	CAST(m.[All Ages]AS numeric) AS [Total males],
+	CAST((m.F5+m.F6+m.F8+m.F7+m.F9+m.F10+m.F11+m.F12+m.F13+m.F14+m.F15+m.F16+m.F17+m.F18+m.F19+m.F20+m.F21+m.F22)AS numeric) AS [Males Under 18],
+	CAST((m.F23+m.F24+m.F25+m.F26+m.F27+m.F28+m.F29+m.F30+m.F31+m.F32+m.F33+m.F34)AS numeric) AS [Males 18-29],
+	CAST((m.F35+m.F36+m.F37+m.F38+m.F39+m.F40+m.F41+m.F42+m.F43+m.F44) AS numeric) AS [Males 30-39],
+	CAST((m.F45+m.F46+m.F47+m.F48+m.F49+m.F50+m.F51+m.F52+m.F53+m.F54) AS numeric) AS [Males 40-49],
+	CAST((m.F55+m.F56+m.F57+m.F58+m.F59+m.F60+m.F61+m.F62+m.F63+m.F64) AS numeric) AS [Males 50-59],
+	CAST((m.F65+m.F66+m.F67+m.F68+m.F69+m.F70+m.F71+m.F72+m.F73+m.F74) AS numeric) AS [Males 60-69],
+	CAST((m.F75+m.F76+m.F77+m.F78+m.F79+m.F80+m.F81+m.F82+m.F83+m.F84+
+	m.F85+m.F86+m.F87+m.F88+m.F89+m.F90+m.F91+m.F92+m.F93+f.[90+]) AS numeric) AS [Males 70+]
+	INTO Crime_Profiler.dbo.GM_crime_population
+	FROM Crime_Profiler.dbo.mid_2017_females f
+	INNER JOIN Crime_Profiler.dbo.mid_2017_males m
+	ON m.[Area Codes]=f.[Area Codes]
+	INNER JOIN Crime_Profiler.dbo.GM_Crime c
+	ON m.[Area Codes]=c.[LSOA code]
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+--add ID column
+IF (SELECT COUNT(*) FROM sys.columns WHERE name = 'ID'
+AND OBJECT_NAME(object_id) = 'GM_crime_population') = 0
+	BEGIN
+	ALTER TABLE Crime_Profiler.dbo.GM_crime_population
+	ADD ID INT IDENTITY;
+	END;
+
+--make ID column primary key
+USE Crime_Profiler;
+GO
+IF NOT EXISTS (SELECT * FROM  INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+WHERE TABLE_NAME='GM_crime_population')
+	BEGIN
+	ALTER TABLE Crime_Profiler.dbo.GM_crime_population
+	ADD CONSTRAINT PK_Id PRIMARY KEY NONCLUSTERED (ID)
+	END;
+
+--remove common string found in Location column
+BEGIN
+BEGIN TRY
+	UPDATE Crime_Profiler.dbo.GM_crime_population
+	SET Location = REPLACE(Location, 'On or Near' , '')
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+--trigger which prevents deletion from main table
+USE Crime_Profiler;
+GO
+CREATE OR ALTER TRIGGER not_delete_report
+ON Crime_Profiler.dbo.GM_crime_population
+INSTEAD OF DELETE
+AS
+IF EXISTS (SELECT* FROM Crime_Profiler.dbo.GM_crime_population)
+DECLARE @Error NVARCHAR(100)
+SET	@Error = 'Cannot delete from this table'
+BEGIN
+RAISERROR(@Error, 16, 1 )
+ROLLBACK TRANSACTION
+END
+GO
+
+
+
+---create views for excel report
+--create view which works out frequency of different crimes according to LSOA, location and month
+USE Crime_Profiler;
+GO
+CREATE OR ALTER VIEW dbo.v_crime_count AS
+SELECT [LSOA name], SUBSTRING([LSOA name],1,LEN([LSOA name])-5) AS Area, [Location],
+[Month], [Crime type],COUNT([Crime type]) AS Frequency, 
+AVG([Total females]) AS [Total females], AVG([Total males]) AS [Total males], 
+(AVG([Total females]) + AVG([Total males])) AS [Total population]
+FROM Crime_Profiler.dbo.GM_crime_population
+GROUP BY [Crime type],[LSOA name], [Location],  [Month];
+
+
+--create few which shows crime rate for each crime type, per LSOA, per area, per location per month
+USE Crime_Profiler;
+GO
+CREATE OR ALTER VIEW dbo.v_crime_ratio AS
+SELECT [LSOA name], Area, [Location], [Month], [Crime type],
+[Frequency], ([Frequency]/[Total females]*100) AS [Crime rate per 100 females],
+([Frequency]/[Total males]*100) AS [Crime rate per 100 males],
+([Frequency]/[Total males]*100) AS [Crime rate per 100 population]
+FROM dbo.v_crime_count;
+
+---create table which has the crime rate per area
+USE Crime_Profiler;
+GO
+CREATE OR ALTER VIEW dbo.v_area_crime_rate AS
+SELECT Area, SUM([Frequency]/[Total females]*100) AS [Crime rate per 100 females],
+SUM([Frequency]/[Total males]*100) AS [Crime rate per 100 males],
+SUM([Frequency]/[Total males]*100) AS [Crime rate per 100 population]
+FROM dbo.v_crime_count
+GROUP BY Area;
+
+
+--QGIS preparation
+-- create new table
+IF OBJECT_ID('Crime_Profiler.dbo.GM_crime_geolocation') IS NOT NULL DROP TABLE Crime_Profiler.dbo.GM_crime_geolocation;
+
+BEGIN
+BEGIN TRY
+SELECT [LSOA name], [LSOA code],SUBSTRING([LSOA name],1,LEN([LSOA name])-5) AS Area, 
+[Crime type], Longitude,Latitude
+INTO Crime_Profiler.dbo.GM_crime_geolocation
+FROM Crime_Profiler.dbo.GM_crime_population
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+---Add geolocation column
+IF (SELECT COUNT(*) FROM sys.columns WHERE name = 'GeoLocation'
+AND OBJECT_NAME(object_id) = 'GM_crime_geolocation') = 0
+	BEGIN
+	ALTER TABLE Crime_Profiler.dbo.GM_crime_geolocation
+	ADD [GeoLocation] GEOGRAPHY
+	END;
+
+--Set geolocation variable
+BEGIN
+BEGIN TRY
+UPDATE Crime_Profiler.dbo.GM_crime_geolocation
+SET GeoLocation = geography::Point(Latitude, Longitude, 4326)
+WHERE Longitude IS NOT NULL
+AND Latitude IS NOT NULL
+AND CAST(Latitude AS decimal(10, 6)) BETWEEN -90 AND 90
+AND CAST(Longitude AS decimal(10, 6)) BETWEEN -90 AND 90
+END TRY
+BEGIN CATCH
+        SELECT  
+            ERROR_NUMBER() AS ErrorNumber  
+            ,ERROR_SEVERITY() AS ErrorSeverity  
+            ,ERROR_STATE() AS ErrorState  
+            ,ERROR_PROCEDURE() AS ErrorProcedure  
+            ,ERROR_LINE() AS ErrorLine  
+            ,ERROR_MESSAGE() AS ErrorMessage;  
+    END CATCH
+END;
+
+---view for vehicle crime in Greater Manchester
+USE Crime_Profiler;
+GO
+CREATE OR ALTER VIEW dbo.v_vehicle_crime_GM AS
+SELECT ID, [LSOA name], [LSOA code], GeoLocation
+FROM Crime_Profiler.dbo.GM_crime_geolocation
+WHERE [Crime type] = 'Vehicle crime';
+
+
+---view for anti-social behaviour in Salford
+USE Crime_Profiler;
+GO
+CREATE OR ALTER VIEW dbo.v_ASB_salford AS
+SELECT ID, [LSOA name], [LSOA code], GeoLocation
+FROM Crime_Profiler.dbo.GM_crime_geolocation
+WHERE [Crime type] = 'Anti-social behaviour'
+AND [Area] LIKE 'Salford';
+
+
